@@ -11,24 +11,28 @@ class ExpenseList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 430,
+      height: MediaQuery.of(context).size.height * 0.6,
       child: expenses.isEmpty
-          ? Column(
-              children: <Widget>[
-                SizedBox(height: 10),
-                Text(
-                  'Nenhuma despesa cadastrada!',
-                  style: Theme.of(context).textTheme.title,
-                ),
-                SizedBox(height: 50),
-                Container(
-                  height: 200,
-                  child: Image.asset(
-                    'assets/images/waiting.png',
-                    fit: BoxFit.cover,
-                  ),
-                ),
-              ],
+          ? LayoutBuilder(
+              builder: (ctx, constraints) {
+                return Column(
+                  children: <Widget>[
+                    SizedBox(height: 20),
+                    Text(
+                      'Nenhuma despesa cadastrada!',
+                      style: Theme.of(context).textTheme.title,
+                    ),
+                    SizedBox(height: 20),
+                    Container(
+                      height: constraints.maxHeight * 0.6,
+                      child: Image.asset(
+                        'assets/images/waiting.png',
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  ],
+                );
+              },
             )
           : ListView.builder(
               itemCount: expenses.length,
@@ -51,11 +55,18 @@ class ExpenseList extends StatelessWidget {
                     title: Text(expense.description,
                         style: Theme.of(context).textTheme.title),
                     subtitle: Text(DateFormat('d MMM y').format(expense.date)),
-                    trailing: IconButton(
-                      icon: Icon(Icons.delete),
-                      color: Theme.of(context).errorColor,
-                      onPressed: () => onRemoveExpense(expense.id),
-                    ),
+                    trailing: MediaQuery.of(context).size.width > 480
+                        ? FlatButton.icon(
+                            onPressed: () => onRemoveExpense(expense.id),
+                            icon: Icon(Icons.delete),
+                            label: Text('Excluir'),
+                            textColor: Theme.of(context).errorColor,
+                          )
+                        : IconButton(
+                            icon: Icon(Icons.delete),
+                            color: Theme.of(context).errorColor,
+                            onPressed: () => onRemoveExpense(expense.id),
+                          ),
                   ),
                 );
               }),
